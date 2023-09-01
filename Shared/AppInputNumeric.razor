@@ -1,0 +1,27 @@
+﻿<input class="form-control"
+       style="max-width:100px;"
+       @bind-value="@Value"
+       type="number"
+       placeholder="@Placeholder" />
+
+@code {
+    private int _value;
+
+    [Parameter]
+    public int Value
+    {
+        get => _value;
+        set
+        {
+            if (_value == value) return;
+            _value = value;
+            ValueChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; }
+}
