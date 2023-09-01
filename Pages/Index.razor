@@ -6,26 +6,23 @@
 <h1>Generador de Caracteres Aleatorios</h1>
 <div class="d-flex flex-row">
     <label class="p-1">Cantidad de Caracteres</label>
-    <AppInputNumeric @bind-Value="NumeroCaracteres" Placeholder="Cantidad de Caracteres" />
+    <AppInputNumeric @bind-Value="numeroCaracteres" Placeholder="Cantidad de Caracteres" />
 </div>
 <div class="d-flex flex-row">
     <label class="p-1" typeof="Bold">Numeros</label>
     <CheckBox @bind-Checked="@chkNumeros" />
-</div>
-<div class="d-flex flex-row">
-    <label class="p-1" >Texto</label>
+    <label class="p-1">Texto</label>
     <CheckBox @bind-Checked="@chkTexto" />
-</div>
-<div class="d-flex flex-row">
-    <label class="p-1" >Caracteres Especiales</label>
+    <label class="p-1">Caracteres Especiales</label>
     <CheckBox @bind-Checked="@chkCaracteres" />
-</div>
-<div class="d-flex flex-row">
-    <label class="p-2" >Generar Archivo</label>
+    <label class="p-2">Generar Archivo</label>
     <CheckBox @bind-Checked="@chkGenerarArchivo" />
 </div>
 <div class="d-flex align-items-stretch">
-    <AppInputText Placeholder="Ruta Archivo" @bind-Value="pathArchivo" />
+    @if (chkGenerarArchivo)
+    {
+        <AppInputText Placeholder="Ruta Archivo" @bind-Value="pathArchivo" />
+    }
 </div>
 <div class="p-1">
     <Button Click="GenerarTexto" Color=Color.Primary Text="Generar Aleatorio" />
@@ -33,7 +30,7 @@
 <div class="d-flex align-items-stretch">
     <AppInputText Placeholder="Texto generado acá" @bind-Value="textoGenerado" />
 </div>
-@if (mensajeError != "") 
+@if (mensajeError != "")
 {
     <div class="alert alert-danger" role="alert">
         @mensajeError
@@ -42,47 +39,43 @@
 @code
 {
     private string textoGenerado;
-    private string mensajeError="";
+    private string mensajeError = "";
     private string pathArchivo;
-    private int NumeroCaracteres = 10;
+    private int numeroCaracteres = 10;
     private bool chkTexto = false;
     private bool chkNumeros = false;
     private bool chkCaracteres = false;
     private bool chkGenerarArchivo = false;
     static Random rd = new Random();
-    private string allowedChars;
+    private string caracteresPermitidos;
 
     private void GenerarTexto()
     {
-        allowedChars = "";
+        caracteresPermitidos = "";
         mensajeError = "";
-        if (chkTexto == true) allowedChars = allowedChars + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-        if (chkNumeros == true) allowedChars = allowedChars + "0123456789";
-        if (chkCaracteres == true) allowedChars = allowedChars + "!@$?_-.";
+        if (chkTexto == true) caracteresPermitidos = caracteresPermitidos + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+        if (chkNumeros == true) caracteresPermitidos = caracteresPermitidos + "0123456789";
+        if (chkCaracteres == true) caracteresPermitidos = caracteresPermitidos + "!@$?_-.";
 
-        char[] chars = new char[NumeroCaracteres];
+        char[] chars = new char[numeroCaracteres];
 
         if (chkTexto == false && chkNumeros == false && chkCaracteres == false) { }
         else
         {
-            for (int i = 0; i < NumeroCaracteres; i++)
+            for (int i = 0; i < numeroCaracteres; i++)
             {
-                chars[i] = allowedChars[rd.Next(0, allowedChars.Length)];
+                chars[i] = caracteresPermitidos[rd.Next(0, caracteresPermitidos.Length)];
             }
             textoGenerado = new string(chars);
 
-            if (chkGenerarArchivo==true)
+            if (chkGenerarArchivo == true)
             {
                 try
                 {
                     var rutaCompleta = pathArchivo + "\\ArchivoGenerado.txt";
-                    if (File.Exists(rutaCompleta))
-                    {
-                        rutaCompleta = rutaCompleta.Replace(".txt", "-Copia.txt");
-                    }
                     File.WriteAllText(rutaCompleta, textoGenerado);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     mensajeError = "Ruta Inválida. Indique una ruta correcta";
                 }
@@ -92,4 +85,3 @@
 
     }
 }
-
